@@ -30,6 +30,8 @@ model clientes_csv {
   score          Decimal? @db.Decimal(6, 2)
   calculado_en   DateTime @default(now()) @db.Timestamptz(6)
   segmento       String?
+  media_margen   Decimal? @db.Decimal(10, 4)
+  m_score        Int?
 
   @@unique([id_cliente, year_, trimestre], map: "clientes_csv_uniq_cliente_periodo")
 }
@@ -40,69 +42,77 @@ model datos_para_el_csv {
   nombre_r_social String?
   fecha           DateTime? @db.Date
   volumen         Decimal?  @db.Decimal(10, 2)
+  margen          Decimal?  @db.Decimal(10, 4)
 
   @@ignore
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model entrada_tubos {
-  cif_o_nif         String?
-  tipo_cliente      String?
-  id_cliente        String?
-  nombre_r_social   String?
-  sector            String?
-  fecha_alta        String?
-  antig_edad        BigInt?   @map("antigüedad")
-  razon_social      String?
-  fecha_compra      DateTime? @db.Date
-  volumen           String?
-  margen            String?
-  I_PORTES          BigInt?
-  FECHA_PAGO        String?
-  serie_alb         String?
-  articulo          String?
-  nombre_articulo   String?
-  unidades          String?
-  precio            String?
-  peso_real         String?
-  tipo_portes_doc   String?
-  forma_pago        String?
-  estado_alb        BigInt?
-  tarifa            String?
-  margen_importe    String?
-  serie_fac         String?
-  rig_fac           BigInt?
-  estado_fac        BigInt?
-  case              String?
-  tipo_portes_cli   String?
-  rango             String?
-  indice            String?
-  i_portes_cli      BigInt?
-  fecha_entrada_mat DateTime? @db.Timestamp(6)
+model excel_data {
+  cif_o_nif           String?   @map("cif o nif")
+  tipo_cliente        String?   @map("tipo cliente")
+  cliente             BigInt?
+  nombre_r_social     String?
+  sector              String?
+  fecha_alta          String?
+  antig_edad__a_os_   Float?    @map("antigüedad (años)")
+  razon_social        String?   @map("razon social")
+  fecha_compra        DateTime? @db.Date
+  mes                 BigInt?
+  a_o                 BigInt?   @map("año")
+  fecha_corte_periodo DateTime? @map("fecha corte periodo") @db.Timestamp(6)
+  recency             Float?
+  frecuency_          BigInt?   @map("frecuency ")
+  volumen             Float?
+  margen              Float?
+  i_portes            BigInt?
+  vencimiento         String?
+  fecha_pago          String?
+  impago              Float?
+  serie_alb           String?
+  articulo            String?
+  titulo              String?
+  unidades            Float?
+  precio              Float?
+  peso_real           Float?
+  tipo_portes_doc     String?
+  forma_pago          String?
+  estado_alb          BigInt?
+  tarifa              String?
+  margen_importe      Float?
+  serie_fac           String?
+  rig_fac             BigInt?
+  estado_fac          BigInt?
+  case                String?
+  tipo_portes_cli     String?
+  rango               String?
+  indice              String?
+  i_portes_cli        BigInt?
+  fecha_entrada_mat   String?
 
   @@ignore
 }
 
 model segmento_categorico {
-  id               Int     @id @default(autoincrement())
+  id               Int      @id @default(autoincrement())
   nombre_categoria String?
-  score_min        Int?
-  score_max        Int?
+  score_min        Decimal? @db.Decimal(10, 2)
+  score_max        Decimal? @db.Decimal(10, 2)
   segmento         String?
 }
 
 model variables_pesos {
   id     Int      @id @default(autoincrement())
   nombre String?
-  peso   Decimal? @db.Decimal
+  peso   Decimal? @db.Decimal(10, 2)
 }
 
 model variables_rangos {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   nombre     String?
-  min_valor  Int?
-  max_valor  Int?
-  puntuacion Int?
+  min_valor  Decimal? @db.Decimal(20, 2)
+  max_valor  Decimal? @db.Decimal(20, 2)
+  puntuacion Decimal? @db.Decimal(20, 2)
 }
 
 model vcs {
@@ -110,4 +120,13 @@ model vcs {
   segmento_anterior   String?
   segmento_actual     String?
   categoria_cognitiva String?
+}
+
+model data_tercerios_varios {
+  id              Int       @id @default(autoincrement())
+  cliente         String?
+  nombre_r_social String?
+  fecha_compra    DateTime? @db.Date
+  volumen         Decimal?  @db.Decimal(10, 2)
+  margen          Decimal?  @db.Decimal(10, 4)
 }
