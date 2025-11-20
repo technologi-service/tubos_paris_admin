@@ -17,15 +17,17 @@ export const GET: APIRoute = async () => {
       return acc;
     }, {});
 
-    // Formatear los datos para el gráfico
+    // Asegurar el orden de los segmentos del 1 al 5
+    const orderedSegments = ['1*', '2*', '3*', '4*', '5*'];
+    const categories = orderedSegments;
+    const data = orderedSegments.map((segment) => segmentCounts[segment] || 0);
+
     const series = [
       {
         name: 'Clientes',
-        data: Object.values(segmentCounts),
+        data,
       },
     ];
-
-    const categories = Object.keys(segmentCounts);
 
     return new Response(JSON.stringify({ series, categories }), {
       status: 200,

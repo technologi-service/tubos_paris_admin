@@ -7,8 +7,9 @@ const { data, error } = await Astro.callAction(actions.getSegmentosVcs, {});
 let grupos: Record<string, any[]> = {};
 if (Array.isArray(data)) {
   for (const segmento of data) {
-    if (!grupos[segmento.nombre_categoria]) grupos[segmento.nombre_categoria] = [];
-    grupos[segmento.nombre_categoria].push(segmento);
+    const categoria = segmento.nombre_categoria ?? 'Sin Categoría';
+    if (!grupos[categoria]) grupos[categoria] = [];
+    grupos[categoria].push(segmento);
   }
   // Ordenar cada grupo por el campo id de 1 a 5
   for (const key in grupos) {

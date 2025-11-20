@@ -7,8 +7,10 @@ const {data, error} = await Astro.callAction(actions.getRangos, {})
 let grupos: Record<string, any[]> = {};
 if (Array.isArray(data)) {
   for (const rango of data) {
-    if (!grupos[rango.nombre]) grupos[rango.nombre] = [];
-    grupos[rango.nombre].push(rango);
+    if (rango && typeof rango.nombre === 'string') {
+      if (!grupos[rango.nombre]) grupos[rango.nombre] = [];
+      grupos[rango.nombre].push(rango);
+    }
   }
 }
 ---

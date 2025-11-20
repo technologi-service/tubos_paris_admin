@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 interface ChartState {
-  series: Array<{ name: string; data: number[]; color?: string }>; // Agregué color opcional a cada serie
+  series: Array<{ name: string; data: number[]; color?: string }>;
   options: {
     chart: {
       type: 'bar';
@@ -93,29 +93,22 @@ const ApexChart: React.FC = () => {
         }
         const data = await response.json();
 
-        // Ordenar categorías del 1 al 5
-        const sortedCategories = data.categories.sort((a: string, b: string) => {
-          const numA = parseInt(a.match(/\d+/)?.[0] || '0', 10);
-          const numB = parseInt(b.match(/\d+/)?.[0] || '0', 10);
-          return numA - numB;
-        });
+        console.log('Datos recibidos:', data); // Log para depuración
 
-        // Definir colores únicos para cada serie
-        const colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33A1'];
+        if (!data.series || !data.categories) {
+          throw new Error('Estructura de datos inválida');
+        }
 
+        // Actualizar el estado con los datos recibidos
         setState((prevState) => ({
           ...prevState,
-          series: data.series.map((serie: any, index: number) => ({
-            ...serie,
-            color: colors[index % colors.length], // Asignar color único a cada serie
-          })),
+          series: data.series,
           options: {
             ...prevState.options,
             xaxis: {
               ...prevState.options.xaxis,
-              categories: sortedCategories,
+              categories: data.categories,
             },
-            colors: colors.slice(0, data.series.length), // Aplicar colores a las series
           },
         }));
       } catch (error) {
@@ -128,6 +121,7 @@ const ApexChart: React.FC = () => {
 
   return (
     <div>
+      <h2 className="text-center text-xl font-bold mb-4">Gráfico de Métricas</h2>
       <ReactApexChart options={state.options} series={state.series} type="bar" height={350} />
     </div>
   );
